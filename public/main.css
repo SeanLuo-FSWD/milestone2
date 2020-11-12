@@ -1,0 +1,19 @@
+.container {
+  grid-template:
+    "top top" 100px
+    "left right" auto
+    1fr 1fr;
+}
+
+.top {
+  grid-area: top;
+  background-color: red;
+}
+.left {
+  grid-area: left;
+  background-color: green;
+}
+.right {
+  grid-area: right;
+  background-color: blue;
+}
