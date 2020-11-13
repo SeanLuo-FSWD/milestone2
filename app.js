@@ -1,64 +1,61 @@
 const http = require("http");
 const fs = require("fs");
-// const fsp = fs.promises;
 const path = require("path");
 const { promises } = require("dns");
+const formidable = require("formidable");
 
 const hostname = "127.0.0.1";
 const port = 3000;
+const cssPath = "./public/main.css";
+const jsPath = "./public/main.js";
 
-http
-  .createServer(function (request, response) {
-    console.log("request ", request.url);
+const server = http.createServer(function (req, res) {
+  let filePath = "." + req.url;
 
-    const cssPath = "./public/main.css";
-    const jsPath = "./public/main.js";
-    let filePath = "." + request.url;
+  if (req.method.toLowerCase() === "post") {
+    console.log("req body " + req.body);
+    const form = formidable({ multiples: true });
 
-    if (filePath == "./") {
-      filePath = "./public/index.html";
+    form.parse(req, (err, fields, files) => {
+      let buf = Buffer.from(JSON.stringify({ fields, files }, null, 2));
+      res.writeHead(200, { "content-type": "image/png" });
+      res.end(buf);
+    });
+
+    return;
+  } else {
+    switch (filePath) {
+      case "./main.css":
+        filePath = "./public/main.css";
+        res.writeHead(200, { "Content-type": "text/css" });
+        break;
+      case "./main.js":
+        filePath = "./public/main.js";
+        res.writeHead(200, { "Content-type": "application/javascript" });
+        break;
+      case "./":
+        filePath = "./public/index.html";
+        res.writeHead(200, { "Content-type": "text/html" });
     }
 
-    const readFilePromise = (fileToRead) => {
-      let extname = String(path.extname(fileToRead)).toLowerCase();
-      let mimeTypes = {
-        ".html": "text/html",
-        ".js": "text/javascript",
-        ".css": "text/css",
-        ".json": "application/json",
-        ".png": "image/png",
-      };
-      let contentType = mimeTypes[extname] || "application/octet-stream";
+    fs.readFile(filePath, function (error, content) {
+      if (error) {
+        if (filePath == "./favicon.ico") {
+          res.writeHead(200, { "Content-Type": "image/x-icon" });
+          res.end();
+          return;
+        } else {
+          res.end(
+            "Sorry, check with the site admin for error: " + error + " ..\n"
+          );
+        }
+      } else {
+        res.end(content, "utf-8");
+      }
+    });
+  }
+});
 
-      return new Promise((resolve, reject) => {
-        fs.readFile(fileToRead, function (error, content) {
-          if (error) {
-            reject(error);
-          } else {
-            response.writeHead(200, { "Content-Type": contentType });
-            if (contentType == "text/javascript") {
-              console.log("end " + contentType);
-              response.end(content, "utf-8");
-            } else {
-              console.log("write " + contentType);
-
-              response.write(content, "utf-8");
-            }
-            resolve();
-          }
-        });
-      });
-    };
-
-    readFilePromise(filePath)
-      .then(() => readFilePromise(cssPath))
-      .then(() => readFilePromise(jsPath))
-      .catch((error) => {
-        response.end(
-          "Sorry, check with the site admin for error: " + error.code + " ..\n"
-        );
-      });
-  })
-  .listen(port, hostname, () => {
-    console.log(`Server running at http://${hostname}:${port}/`);
-  });
+server.listen(port, hostname, () => {
+  console.log(`Server running at http://${hostname}:${port}/`);
+});
