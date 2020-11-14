@@ -37,14 +37,17 @@ const upload = (img) => {
   })
     .then((response) => {
       if (response.status == 200) {
-        return response;
+        return response.blob();
       } else {
         throw new Error();
       }
     })
-    .then(
-      (responseData) => uploadImg(responseData.body) // Handle the success response object
-    )
+    .then((responseData) => {
+      console.log("responseData  responseData  ");
+
+      console.log(responseData);
+      uploadImg(responseData);
+    })
     .catch(
       (error) => console.log(error) // Handle the error response object
     );

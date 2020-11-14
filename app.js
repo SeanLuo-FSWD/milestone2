@@ -22,9 +22,19 @@ const server = http.createServer(function (req, res) {
       if (err) {
         console.log("err " + err);
       } else {
-        console.log(files);
-        res.writeHead(200, { "content-type": "image/png" });
-        res.end(files);
+        let oldPath = files.pngImg.path;
+
+        let imgStream = fs.createReadStream(oldPath);
+
+        imgStream.on("open", function () {
+          // This just pipes the read stream to the response object (which goes to the client)
+          imgStream.pipe(res);
+        });
+
+        imgStream.on("error", function (err) {
+          console.log(err);
+          res.end(err);
+        });
       }
     });
 
