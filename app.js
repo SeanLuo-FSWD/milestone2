@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const { promises } = require("dns");
 const formidable = require("formidable");
+const { ifError } = require("assert");
 
 const hostname = "127.0.0.1";
 const port = 3000;
@@ -13,16 +14,41 @@ const server = http.createServer(function (req, res) {
   let filePath = "." + req.url;
 
   if (req.method.toLowerCase() === "post") {
-    console.log("req body " + req.body);
     const form = formidable({ multiples: true });
 
     form.parse(req, (err, fields, files) => {
-      let buf = Buffer.from(JSON.stringify({ fields, files }, null, 2));
-      res.writeHead(200, { "content-type": "image/png" });
-      res.end(buf);
+      console.log(fields + " inside parse " + files);
+
+      if (err) {
+        console.log("err " + err);
+      } else {
+        console.log(files);
+        res.writeHead(200, { "content-type": "image/png" });
+        res.end(files);
+      }
     });
 
-    return;
+    // let data;
+    // req.on("data", (chunk) => {
+    //   data += chunk;
+    //   console.log(`Data chunk available: ${chunk}`);
+    // });
+    // req.on("end", () => {
+    //   console.log(data + " ended ");
+    //   form.parse(req, (err, fields, files) => {
+    //     console.log(fields + " inside parse " + files);
+
+    //     if (err) {
+    //       console.log("err " + err);
+    //     } else {
+    //       console.log(fields + " never else? " + files);
+    //       res.writeHead(200, { "content-type": "application/json" });
+    //       res.end(JSON.stringify({ fields, files }, null, 2));
+    //     }
+    //   });
+
+    //   return;
+    // });
   } else {
     switch (filePath) {
       case "./main.css":

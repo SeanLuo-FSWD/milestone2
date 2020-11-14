@@ -9,8 +9,7 @@ fileSelector.addEventListener("change", (event) => {
 
   console.log("imgUploaded[0] " + imgUploaded[0]);
   image.src = URL.createObjectURL(imgUploaded[0]);
-  console.log("file uploaded binaries? " + imgUploaded[0]);
-  debugger;
+  // debugger;
   upload(imgUploaded[0]);
 });
 
@@ -20,14 +19,21 @@ const uploadImg = (img) => {
 };
 
 const upload = (img) => {
-  console.log("img img " + JSON.stringify(img));
-  fetch("http://localhost:3000/", {
+  let formData = new FormData();
+  formData.append("pngImg", img);
+
+  fetch("http://localhost:3000/upload", {
     method: "POST",
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ a: 1, b: "Textual content" }),
+    // headers: {
+    //   Accept:
+    //     "application/json, application/xml, text/plain, text/html, image/png, *.*",
+    //   "Content-Type": "multipart/form-data",
+    // },
+    // headers: {
+    //   "Content-Type": "image/png",
+    //   "content-length": img.size,
+    // },
+    body: formData,
   })
     .then((response) => {
       if (response.status == 200) {
