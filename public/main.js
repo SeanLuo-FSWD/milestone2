@@ -26,7 +26,6 @@ const uploadGreyImg = (eleId, img) => {
 
   blob = img.slice(0, img.size, "image/png");
 
-  debugger;
 
   let imgUrl = URL.createObjectURL(blob);
 
