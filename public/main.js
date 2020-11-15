@@ -5,18 +5,38 @@ let imgUploaded;
 const fileSelector = document.getElementById("myFile");
 fileSelector.addEventListener("change", (event) => {
   imgUploaded = event.target.files;
-  uploadImg("output", imgUploaded[0]);
 
-  // debugger;
-  upload(imgUploaded[0]);
+  let image = document.getElementById("output");
+  image.src = URL.createObjectURL(imgUploaded[0]);
 });
 
-const uploadImg = (eleId, img) => {
-  let image = document.getElementById(eleId);
-  image.src = URL.createObjectURL(img);
+document.getElementById("convert").onclick = () => {
+  imgUploaded
+    ? convert(imgUploaded[0])
+    : alert("please upload a png image first");
 };
 
-const upload = (img) => {
+const uploadGreyImg = (eleId, img) => {
+  let image = document.getElementById(eleId);
+  let download = document.getElementById("download");
+  let downloadBtn = document.getElementById("downloadBtn");
+
+  img.lastModifiedDate = new Date();
+  img.name = 'grayscale.png';
+
+  blob = img.slice(0, img.size, "image/png");
+
+  debugger;
+
+  let imgUrl = URL.createObjectURL(blob);
+
+  image.src = imgUrl;
+  download.href = imgUrl;
+  downloadBtn.style.display = "block";
+
+};
+
+const convert = (img) => {
   let formData = new FormData();
   formData.append("pngImg", img);
 
@@ -35,10 +55,7 @@ const upload = (img) => {
       }
     })
     .then((responseData) => {
-      console.log("responseData  responseData  ");
-
-      console.log(responseData);
-      uploadImg("input", responseData);
+      uploadGreyImg("input", responseData);
     })
     .catch(
       (error) => console.log(error) // Handle the error response object

@@ -22,10 +22,13 @@
             id="myFile"
             style="display: none"
             name="filename"
+            accept="image/png"
           />
 
-          <button class="btn">2. Convert</button>
-          <button class="btn">3. Download</button>
+          <button class="btn" id="convert">2. Convert</button>
+          <button class="btn" id="downloadBtn">
+            <a id="download" download="grayscaled.png">3. Download</a>
+          </button>
         </div>
       </div>
       <div class="left">
@@ -34,7 +37,9 @@
       </div>
       <div class="right">
         <h2>Grayscaled</h2>
-        <div class="upload"><img id="input" width="100%" /></div>
+        <div class="upload">
+          <img id="input" width="100%" />
+        </div>
       </div>
     </div>
   </body>
