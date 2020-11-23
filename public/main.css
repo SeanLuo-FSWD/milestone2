@@ -7,15 +7,17 @@
 
 .top {
   grid-area: top;
-  background-color: red;
+  /* background-color: red; */
 }
 .left {
   grid-area: left;
-  background-color: green;
+  /* background-color: green; */
+  border: solid;
 }
 .right {
   grid-area: right;
-  background-color: blue;
+  /* background-color: blue; */
+  border: solid;
 }
 
 h2 {
